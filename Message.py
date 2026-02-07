@@ -1,6 +1,6 @@
 from datetime import datetime
 from dateutil import tz
-from .Component import Component
+from Component import Component
 
 
 class Message(Component):
@@ -22,4 +22,16 @@ class Message(Component):
         y.append(local.strftime('%Y-%m-%d %H:%M:%S'))
         y.append(results.get('snippet', ''))
         y.append(results.get('labelIds', []))
+        headers = results.get('payload', {}).get('headers', [])
+        subject = ""
+        recipient = ""
+        for header in headers:
+            if header.get('name') == 'Subject':
+                subject = header.get('value')
+            if header.get('name') == 'To':
+                recipient = header.get('value')
+        if subject.startswith("Re: "):
+            subject = subject[4:]
+        y.append(subject)
+        y.append(recipient)
         self.output.append(y)

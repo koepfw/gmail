@@ -5,10 +5,11 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from gmail.Timer import Timer
+from Timer import Timer
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar.readonly',
+          'https://www.googleapis.com/auth/gmail.readonly',]
 
 class Component():
     def __init__(self,file):
@@ -65,7 +66,7 @@ class Component():
                     creds.refresh(Request())
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        'credentials_cal.json', SCOPES)
+                        'credentials.json', SCOPES)
                     creds = flow.run_local_server(port=0)
                 # Save the credentials for the next run
                 with open('token_cal.pickle', 'wb') as token:

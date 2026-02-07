@@ -1,4 +1,4 @@
-from .Component import Component
+from Component import Component
 import datetime
 
 class Events(Component):
@@ -7,13 +7,14 @@ class Events(Component):
         self.iscal = True
         self.q = ""
         self.max = 1000
-        self.start = '2020-10-20'
-        self.end = '2020-12-31'
+        self.start = '2025-12-14'
+        self.end = datetime.datetime.now().strftime('%Y-%m-%d')
 
     def run(self,pageToken = ""):
         # Call the Gmail API
         start = datetime.datetime.strptime(self.start, '%Y-%m-%d').isoformat() + '-07:00'
-        end = datetime.datetime.strptime(self.end, '%Y-%m-%d').isoformat() + '-07:00'
+        end = datetime.datetime.strptime(self.end, '%Y-%m-%d') + datetime.timedelta(days=1)
+        end = end.isoformat() + '-07:00'
         results = self.service.events().list(calendarId='primary',timeMin=start,timeMax=end,singleEvents=True,orderBy='startTime',maxResults=100,q=self.q,pageToken=pageToken).execute()
         if len(self.output) == 0:
             self.output = self.transform(results.get('items', []))
