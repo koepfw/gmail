@@ -83,7 +83,14 @@ target_subjects = ["catching up and seeking your advice",
                    "resume",
                    "Invitation: Werner - Alan @ Tue Dec 30, 2025 11am - 11:45am (PST) (alan@kipust.com)",
                    "zoom meeting",
-                   "Zoom / Meet link"]
+                   "Zoom / Meet link",
+                   "Intro: Werner/Jonathan",
+                   "LaunchDarkly role",
+                   "follow up from yesterday",
+                   "thank. you",
+                   "Meeting today",
+                   "congrats",
+                   "Ballard Technology Summit"]
 for x in messages:
     p = Message(file)
     p.id = x.get('id')

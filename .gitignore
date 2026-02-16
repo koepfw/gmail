@@ -8,6 +8,8 @@ __pycache__/
 *.pickle
 *.txt
 *.xlsx
+.DS_Store
+Thumbs.db
 
 # C extensions
 *.so
