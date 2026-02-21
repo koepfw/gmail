@@ -49,7 +49,7 @@ class Events(Component):
                 colorId = 0
             y.append(colorId)
             # networking = 5 / recruiter = 11 / interview = 10 / negotiation = 9
-            if colorId == 5:
+            if colorId == 5 or colorId == 6:
                 idx = 0
             elif colorId == 11:
                 idx = 1

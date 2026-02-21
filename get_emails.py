@@ -91,6 +91,8 @@ target_subjects = ["catching up and seeking your advice",
                    "Meeting today",
                    "congrats",
                    "Ballard Technology Summit"]
+msg_included = []
+msg_excluded = []
 for x in messages:
     p = Message(file)
     p.id = x.get('id')
@@ -101,11 +103,21 @@ for x in messages:
     if day in days.keys():
         if any(label in target_labels for label in labels) or subject in target_subjects:
             days[day] = days[day] + 1
+            msg_included.append(p.output[0])
         else:
-            print(p.output[0])
-            writer.writerow(p.output[0])
+            msg_excluded.append(p.output[0])
     else:
         break
+
+line = ["Included"]
+writer.writerow(line)
+for x in msg_included:
+    writer.writerow(x)
+
+line = ["Excluded"]
+writer.writerow(line)
+for x in msg_excluded:
+    writer.writerow(x)
 
 line = ["Day","Emails"]
 writer.writerow(line)
