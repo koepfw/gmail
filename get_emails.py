@@ -90,7 +90,10 @@ target_subjects = ["catching up and seeking your advice",
                    "thank. you",
                    "Meeting today",
                    "congrats",
-                   "Ballard Technology Summit"]
+                   "Ballard Technology Summit",
+                   "TrueMed Head of Engineering opp",
+                   "DeepL",
+                   "resume from a friend from LILT"]
 msg_included = []
 msg_excluded = []
 for x in messages:
