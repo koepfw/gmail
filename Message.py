@@ -1,6 +1,6 @@
 from datetime import datetime
-from dateutil import tz
 from Component import Component
+import pytz
 
 
 class Message(Component):
@@ -12,14 +12,12 @@ class Message(Component):
     def run(self):
         # Call the Gmail API
         results = self.service.users().messages().get(userId='me',id=self.id).execute()
+        epoch_ms = int(results.get('internalDate', ''))
+        tz = pytz.timezone("America/Los_Angeles")
+        dt = datetime.fromtimestamp(epoch_ms / 1000, tz=tz)
         y = []
-        utc = datetime.utcfromtimestamp(int(results.get('internalDate', ''))/1000)
-        from_zone = tz.tzutc()
-        to_zone = tz.tzlocal()
-        utc = utc.replace(tzinfo=from_zone)
-        local = utc.astimezone(to_zone)
-        y.append(local.strftime('%Y-%m-%d'))
-        y.append(local.strftime('%Y-%m-%d %H:%M:%S'))
+        y.append(dt.strftime('%Y-%m-%d'))
+        y.append(dt.strftime('%Y-%m-%d %H:%M:%S'))
         y.append(results.get('snippet', ''))
         y.append(results.get('labelIds', []))
         headers = results.get('payload', {}).get('headers', [])

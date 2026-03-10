@@ -107,6 +107,9 @@ for x in results:
             msg_excluded.append(x)
     else:
         break
+# sort
+msg_included.sort(key=lambda tup: tup[1], reverse=True)
+msg_excluded.sort(key=lambda tup: tup[1], reverse=True)
 
 line = ["Included"]
 print(line)
