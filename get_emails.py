@@ -2,10 +2,13 @@ from datetime import date,datetime,timedelta,timezone
 import sys
 import csv
 import pytz
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 from Days import Days
 from Message import Message
 from Messages import Messages
+from Reader import Reader
 
 # -------------------------
 # Helper Functions
@@ -71,55 +74,52 @@ messages = p.output
 # loop over messages
 target_labels = {"Label_36",
                  "Label_45"}
-target_subjects = ["catching up and seeking your advice",
-                   "[seattlecto] Hiring: OpenAI Seattle",
-                   "Werner Koepf - Engineering Leadership",
-                   "checking in",
-                   "Werner Koepf and Catie Merrick",
-                   "thank you",
-                   "Werner <> Preply",
-                   "connecting",
-                   "Werner<>Saf",
-                   "resume",
-                   "Invitation: Werner - Alan @ Tue Dec 30, 2025 11am - 11:45am (PST) (alan@kipust.com)",
-                   "zoom meeting",
-                   "Zoom / Meet link",
-                   "Intro: Werner/Jonathan",
-                   "LaunchDarkly role",
-                   "follow up from yesterday",
-                   "thank. you",
-                   "Meeting today",
-                   "congrats",
-                   "Ballard Technology Summit",
-                   "TrueMed Head of Engineering opp",
-                   "DeepL",
-                   "resume from a friend from LILT"]
-msg_included = []
-msg_excluded = []
-for x in messages:
+p = Reader(file)
+p.input = 'job_index_subjects.csv'
+p.execute()
+target_subjects = []
+for x in p.output:
+    target_subjects.append(x[0])
+
+def fetch_message(x):
     p = Message(file)
     p.id = x.get('id')
     p.execute()
-    day = p.output[0][0]
-    labels = p.output[0][3]
-    subject = p.output[0][4]
+    return p.output[0]
+# Run all API calls in parallel
+with ThreadPoolExecutor(max_workers=50) as executor:
+    futures = {executor.submit(fetch_message, x): x for x in messages}
+    results = []
+    for future in as_completed(futures):
+        results.append(future.result())
+
+msg_included = []
+msg_excluded = []
+for x in results:
+    day = x[0]
+    labels = x[3]
+    subject = x[4]
     if day in days.keys():
         if any(label in target_labels for label in labels) or subject in target_subjects:
             days[day] = days[day] + 1
-            msg_included.append(p.output[0])
+            msg_included.append(x)
         else:
-            msg_excluded.append(p.output[0])
+            msg_excluded.append(x)
     else:
         break
 
 line = ["Included"]
+print(line)
 writer.writerow(line)
 for x in msg_included:
+    print(x)
     writer.writerow(x)
 
 line = ["Excluded"]
+print(line)
 writer.writerow(line)
 for x in msg_excluded:
+    print(x)
     writer.writerow(x)
 
 line = ["Day","Emails"]
